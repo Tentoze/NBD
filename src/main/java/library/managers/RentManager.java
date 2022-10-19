@@ -1,5 +1,6 @@
 package library.managers;
 
+import jakarta.persistence.EntityManager;
 import library.model.Book;
 import library.model.Client;
 import library.model.Rent;
@@ -8,24 +9,25 @@ import library.repository.ClientRepository;
 import library.repository.RentRepository;
 
 import java.util.Date;
+import java.util.List;
 
 public class RentManager {
     private RentRepository rentRepository;
     private ClientRepository clientRepository;
     private BookRepository bookRepository;
 
-    public RentManager(RentRepository rentRepository, ClientRepository clientRepository, BookRepository bookRepository) {
-        this.rentRepository = rentRepository;
-        this.clientRepository = clientRepository;
-        this.bookRepository = bookRepository;
+    public RentManager(EntityManager entityManager) {
+        this.rentRepository = new RentRepository(entityManager);
+        this.clientRepository = new ClientRepository(entityManager);
+        this.bookRepository = new BookRepository(entityManager);
     }
 
-    public void rentBook(String personalID, String serialNumber) throws Exception {
+    public Rent rentBook(String personalID, String serialNumber) throws Exception {
         try {
             Client client = clientRepository.findByPersonalID(personalID);
             Book book = bookRepository.findBySerialNumber(serialNumber);
             checkIfBookCanBeRented(client, book);
-            rentRepository.add(new Rent(client, book));
+            return rentRepository.add(new Rent(client, book));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -78,5 +80,15 @@ public class RentManager {
         }
         return false;
     }
+
+    public Rent getRentByBook(String serialnumber) {
+        return rentRepository.findByBook(bookRepository.findBySerialNumber(serialnumber));
+    }
+
+    public List<Rent> getRentByClient(String personalID){
+        return rentRepository.findByClient(clientRepository.findByPersonalID(personalID));
+    }
+
+
 
 }

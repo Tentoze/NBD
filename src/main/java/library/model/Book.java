@@ -19,7 +19,7 @@ public class Book extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "client_id")
+    @Column(name = "book_id")
     private long id;
     @Column(unique = true)
     private String serialNumber;

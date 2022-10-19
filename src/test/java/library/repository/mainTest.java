@@ -26,9 +26,12 @@ class mainTest {
 
     private EntityManagerFactory emf;
     private EntityManager em;
-    private ClientRepository clientRepository;
-    private RentRepository rentRepository;
-    private BookRepository bookRepository;
+
+    private ClientManager clientManager;
+
+    private BookManager bookManager;
+
+    private RentManager rentManager;
 
     @BeforeEach
     void beforeEach() {
@@ -37,32 +40,44 @@ class mainTest {
         }
         emf = Persistence.createEntityManagerFactory("POSTGRES");
         em = emf.createEntityManager();
-        this.bookRepository = new BookRepository(em);
-        this.clientRepository = new ClientRepository(em);
-        this.rentRepository = new RentRepository(em);
-
+        this.clientManager = new ClientManager(em);
+        this.bookManager = new BookManager(em);
+        this.rentManager = new RentManager(em);
     }
 
     @Test
-    void essa() throws Exception {
-        ClientManager clientManager = new ClientManager(clientRepository);
-        BookManager bookManager = new BookManager(bookRepository);
-        RentManager rentManager = new RentManager(rentRepository, clientRepository, bookRepository);
+    void addSameObjects() throws Exception {
+        ClientManager clientManager = new ClientManager(em);
+        BookManager bookManager = new BookManager(em);
+        RentManager rentManager = new RentManager(em);
         clientManager.registerClient("imie", "naziwsko", "231312341", 45);
         clientManager.registerClient("dziecko", "naziwsko", "2313123341", 13);
-        clientManager.registerClient("dziecko", "naziwsko", "2313123341", 13);
 
-        bookManager.registerBook("najlepssza ksiega", "najlepszy autor", "2131341", "zjebane");
+        bookManager.registerBook("najlepssza ksiega", "najlepszy autor", "2131341", "genre");
         rentManager.rentBook("2313123341", "2131341");
         assertThrows(Exception.class, () -> {
             rentManager.rentBook("2313123341", "2131341");
         });
         assertThrows(Exception.class, () -> {
-            bookManager.registerBook("najlepssza ksiega", "najlepszy autor", "2131341", "zjebane");
+            bookManager.registerBook("najlepssza ksiega", "najlepszy autor", "2131341", "genre");
         });
         assertThrows(Exception.class, () -> {
             clientManager.registerClient("dziecko", "naziwsko", "2313123341", 13);
         });
+    }
+    @Test
+    void addCheckRegister() throws Exception {
+        ClientManager clientManager = new ClientManager(em);
+        BookManager bookManager = new BookManager(em);
+        RentManager rentManager = new RentManager(em);
+        var client1 = clientManager.registerClient("imie", "naziwsko", "231312341", 45);
+        var client2 = clientManager.registerClient("dziecko", "naziwsko", "2313123341", 13);
+        var book1 = bookManager.registerBook("najlepssza ksiega", "najlepszy autor", "2131341", "genre");
+        var rent1 = rentManager.rentBook("2313123341", "2131341");
+        assertEquals(clientManager.getClient("231312341"),client1);
+        assertEquals(clientManager.getClient("2313123341"),client2);
+        assertEquals(bookManager.getBook("2131341"),book1);
+        assertEquals(rentManager.getRentByBook("2131341"),rent1);
     }
 
 

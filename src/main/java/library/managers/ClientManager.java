@@ -1,5 +1,6 @@
 package library.managers;
 
+import jakarta.persistence.EntityManager;
 import library.model.Adult;
 import library.model.Child;
 import library.model.Client;
@@ -10,8 +11,8 @@ import java.util.List;
 public class ClientManager {
     private ClientRepository clientRepository;
 
-    public ClientManager(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
+    public ClientManager(EntityManager entityManager) {
+        this.clientRepository = new ClientRepository(entityManager);
     }
 
     public Client getClient(String personalID) {
@@ -22,11 +23,11 @@ public class ClientManager {
         return clientRepository.findAll();
     }
 
-    public void registerClient(String firstname, String lastname, String personalID, int age) {
+    public Client registerClient(String firstname, String lastname, String personalID, int age) {
         if (age < 18) {
-            clientRepository.add(new Child(firstname, lastname, personalID, age));
+            return clientRepository.add(new Child(firstname, lastname, personalID, age));
         } else {
-            clientRepository.add(new Adult(firstname, lastname, personalID, age));
+            return clientRepository.add(new Adult(firstname, lastname, personalID, age));
         }
     }
 
