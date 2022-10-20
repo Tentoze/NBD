@@ -46,7 +46,7 @@ public class RentManager {
         if (client.getMaxBooks() < rentRepository.countByClient(client) + 1) {
             throw new Exception("Client have already rented max number of books");
         }
-        if (client.getDebt() != 0) {
+        if (client.getDebt() > 0) {
             throw new Exception("Client have to pay the debt");
         }
     }
@@ -62,9 +62,9 @@ public class RentManager {
                 throw new Exception("There is no rent with this book");
             }
             if(isAfterEndTime(rent)){
-                clientRepository.updateDebtByPersonalID(
-                        rent.getClient().getPersonalID()
-                        ,rent.getClient().getPenalty()+rent.getClient().getDebt());
+                Client client = rent.getClient();
+                client.setDebt(client.getDebt() + client.getPenalty());
+                clientRepository.update(client);
             }
             rentRepository.remove(rent);
 

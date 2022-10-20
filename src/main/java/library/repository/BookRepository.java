@@ -20,7 +20,4 @@ public class BookRepository extends JpaRepositoryImpl<Book> {
         return entityManager.createNamedQuery("Book.findAll",Book.class).getResultList();
     }
 
-    public void updateIsArchiveBySerialNumber(String serialNumber, Boolean isArchive){
-        entityManager.createNamedQuery("Book.updateIsArchiveBySerialNumber").setParameter("serialNumber",serialNumber).setParameter("isArchive",isArchive);
-    }
 }

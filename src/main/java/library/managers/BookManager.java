@@ -3,14 +3,17 @@ package library.managers;
 import jakarta.persistence.EntityManager;
 import library.model.Book;
 import library.repository.BookRepository;
+import library.repository.RentRepository;
 
 import java.util.List;
 
 public class BookManager {
     BookRepository bookRepository;
+    RentRepository rentRepository;
 
     public BookManager(EntityManager entityManager) {
         this.bookRepository = new BookRepository(entityManager);
+        this.rentRepository = new RentRepository(entityManager);
     }
 
     public Book getBook(String serialNumber) {
@@ -25,8 +28,13 @@ public class BookManager {
         return bookRepository.add(new Book(title,author,serialNumber,genre));
     }
 
-    public void unregisterBook(String serialNumber) {
-        bookRepository.updateIsArchiveBySerialNumber(serialNumber,true); // dodac warunki
+    public void unregisterBook(String serialNumber) throws Exception {
+        Book book = bookRepository.findBySerialNumber(serialNumber);
+        if(rentRepository.existsByBook(book)){
+            throw new Exception("This book is already rented");
+        }
+        book.setArchive(true);
+        bookRepository.update(book);
     }
 
 }

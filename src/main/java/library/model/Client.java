@@ -15,8 +15,6 @@ import lombok.Setter;
 @NamedQueries({
         @NamedQuery(name = "Client.findAll", query = "select c from Client c"),
         @NamedQuery(name = "Client.findByPersonalID", query = "select c from Client c where c.personalID = :personalID"),
-        @NamedQuery(name = "Client.updateIsArchiveByPersonalID", query = "update Client c set c.isArchive = :isArchive where c.personalID = :personalID"),
-        @NamedQuery(name = "Client.updateDebtByPersonalID", query = "update Client c set c.debt = :debt where c.personalID = :personalID")
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter

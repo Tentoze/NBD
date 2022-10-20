@@ -10,7 +10,6 @@ import lombok.Setter;
 @NamedQueries({
         @NamedQuery(name = "Book.findBySerialNumber", query = "select b from Book b where b.serialNumber = :serialNumber"),
         @NamedQuery(name = "Book.findAll", query = "select b from Book b"),
-        @NamedQuery(name = "Book.updateIsArchiveBySerialNumber", query = "update Book b set b.isArchive = :isArchive where b.serialNumber = :serialNumber")
 })
 @Access(AccessType.FIELD)
 @Getter
